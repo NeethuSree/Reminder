@@ -1,0 +1,79 @@
+import pyodbc
+import datetime
+
+conn = pyodbc.connect('DRIVER={SQL Server};SERVER=.;DATABASE=reminder;UID=sa;PWD=admin123')
+
+k=0
+while k!=5:
+    print("1) Add New Reminder")
+    print("2) Update Reminder")
+    print("3) Today's Reminder")
+    print("4) All Reminders")
+    print("5) Exit")
+    s=input("Enter your choice :")
+    print(s)
+    if(s=="1"):
+        rem=input("Enter the Reminder")
+       
+        dts=input("Enter the reminder date in the format mm/dd/yy")
+        aa=conn.cursor()
+        aa.execute("INSERT INTO listing(reminder, rdate)  VALUES(?,?)",(rem, dts))
+        conn.commit()
+    elif(s=="5"):
+        break
+    elif(s=="4"):
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM listing')
+        print()
+        for row in cursor:
+            print(row)
+        print()
+    elif(s=="3"):
+        x = datetime.datetime.now()
+        dt=x.strftime("%x")
+        
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM listing where rdate=?",(dt))       
+        cont=0
+        print()
+        for row in cursor:
+            print(row)
+            cont=cont+1
+            print()
+        if(cont==0):
+            print()
+            print(" No reminder for Today")
+            print()
+    elif(s=="2"):
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM listing')
+        print()
+        for row in cursor:
+            print(row)
+        print()
+        uid=input("enter the id u need to update")
+        matter=input("enter the reminder matter")
+        dts=input("Enter the reminder date in the format mm/dd/yy")
+        cur=conn.cursor()
+        cur.execute("update listing set reminder=?,rdate=? where id=?",(matter,dts,uid))
+        conn.commit()
+        
+        cur1=conn.cursor()
+        cur1.execute('SELECT * FROM listing')
+        print()
+        print("Updated Result")
+        print()
+        for row in cur1:
+            print(row)
+        
+    print()
+    dd=input("do you like to continue?Y/N :")
+    if ((dd=="N")|(dd=="n")):
+        break
+       
+        
+    
+
+
+
+
